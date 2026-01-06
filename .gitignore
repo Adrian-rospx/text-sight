@@ -1,0 +1,6 @@
+# dependencies
+vcpkg_installed/
+
+# build artifacts
+.cache/
+build/
