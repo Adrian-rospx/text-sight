@@ -12,23 +12,6 @@ int main() {
     cv::Mat image(cv::Mat::zeros(200, 200, CV_8UC3));
     cv::circle(image, {100, 100}, 30, {0, 0, 255}, -1);
 
-    using namespace ftxui;
-    // Create a simple document with three text elements.
-    Element document = hbox({
-        text("left")   | border,
-        text("middle") | border | flex,
-        text("right")  | border,
-    });
-    
-    // Create a screen with full width and height fitting the document.
-    auto screen = Screen::Create(
-        Dimension::Full(),       // Width
-        Dimension::Fit(document) // Height
-    );
-    
-    // Render the document onto the screen.
-    Render(screen, document);
-    
-    // Print the screen to the console.
-    screen.Print();
+    cv::imshow("Test", image);
+    cv::waitKey(1000);
 }

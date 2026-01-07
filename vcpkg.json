@@ -1,6 +1,17 @@
 {
+  "name": "text-sight",
   "dependencies": [
-    "opencv",
+    {
+      "name": "opencv4",
+      "default-features": false,
+      "features": [
+        "highgui",
+        "gtk",
+        "dnn",
+        "jpeg",
+        "png"
+      ]
+    },
     "ftxui"
   ]
 }
