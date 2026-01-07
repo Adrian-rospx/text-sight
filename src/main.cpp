@@ -1,4 +1,3 @@
-#include <ftxui/dom/node.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/core/types.hpp>
@@ -6,13 +5,18 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 
-#include <ftxui/screen/screen.hpp>
+#include <ftxui/component/component.hpp>
+#include <ftxui/component/event.hpp>
 #include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/dom/node.hpp>
+#include <ftxui/screen/screen.hpp>
 #include <ftxui/dom/elements.hpp>
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <cstdint>
+#include <thread>
 
 using namespace ftxui;
 
@@ -51,29 +55,50 @@ int main(int argc, char* argv[]) {
     }
 
     // open webcam window
-    cv::namedWindow("Image input", cv::WINDOW_NORMAL);
-    auto termScreen { ScreenInteractive::Create(Dimension::Full()) };
+    // cv::namedWindow("Image input", cv::WINDOW_NORMAL);
+    auto termScreen { ScreenInteractive::Fullscreen() };
     
-    cv::Mat frame;
+    std::string asciiText;
+    
+    bool running {true};
 
-    // main loop
-    while (true) {
-        // capture frame
-        camera >> frame;
-
-        // display
-        cv::imshow("Image input", frame);
+    std::thread worker([&] {
+        cv::Mat frame;
         
-        const std::string asciiText { imageToASCII(frame, termScreen) };
-        const auto asciiScreen { paragraph(asciiText ) };
+        // main loop
+        while (running) {
+            // capture frame
+            camera >> frame;
+            if (frame.empty()) continue;
 
-        termScreen.Clear();
-        Render(termScreen, asciiScreen);
-        termScreen.Print();
+            // display
+            // cv::imshow("Image input", frame);
 
-        // wait 10ms; break on Esc
-        if (cv::waitKey(10) == 27) {
-            break;
+            asciiText = imageToASCII(frame, termScreen);
+            termScreen.PostEvent(Event::Custom);
+        
+            std::this_thread::sleep_for(std::chrono::milliseconds(30));
+            // if (cv::waitKey(30) == 'q') {
+            //     break;
+            // }
         }
-    }
+    });
+
+    auto renderer = Renderer([&]() {
+        return paragraph(asciiText);
+    });  
+
+    auto application = CatchEvent(renderer, [&](Event event) {
+        if (event == Event::Character('q')) {
+            running = false;
+            termScreen.Exit();
+            return true;
+        } 
+        return false;
+    });
+
+    termScreen.Loop(application);
+
+    running = false;
+    worker.join();
 }
