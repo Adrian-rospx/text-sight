@@ -20,10 +20,12 @@ using namespace ftxui;
 const std::string_view textGradient { " .,-;<+*/ixaA8#M" };
 
 struct AppState {
-    std::string ascii_frame{};
     bool running { true };
+    std::string asciiFrame{};
     int width { 120 };
     int height { 40 };
+    std::string command{};
+    bool displayCommand { false };
 };
 
 std::string imageToASCII(const cv::Mat& frame, const int width, const int height) {
@@ -59,7 +61,7 @@ void camera_loop(AppState& state, cv::VideoCapture& camera, ScreenInteractive& s
         state.width = screen.dimx();
         state.height = screen.dimy();
 
-        state.ascii_frame = imageToASCII(frame, state.width, state.height);
+        state.asciiFrame = imageToASCII(frame, state.width, state.height);
 
         screen.PostEvent(Event::Custom);
 
@@ -67,14 +69,60 @@ void camera_loop(AppState& state, cv::VideoCapture& camera, ScreenInteractive& s
     }
 }
 
-Component MakeView(AppState& state) {
-    return Renderer([&]() {
-        return paragraph(state.ascii_frame);
+Component CommandInput(AppState& state) {
+    auto input = Input(state.command, "Enter a command");
+
+    return Renderer(input, [&]() {
+        return vbox({
+            text("Command") | bold,
+            input->Render()
+        })
+        | border
+        | bgcolor(Color::Black)
+        | color(Color::White);
     });
 }
 
-Component MakeController(AppState& state, ScreenInteractive& screen,Component view) {
-    return CatchEvent(view, [&](Event event) {
+Element Overlay(Component command) {
+    return vbox({
+        filler(),
+        hbox({
+            filler(),
+            command->Render() | size(WIDTH, LESS_THAN, 60),
+            filler()
+        }),
+        text("")    // small text margin    
+    });
+}
+
+Element CameraView(AppState& state) {
+    return paragraph(state.asciiFrame)
+            | size(WIDTH, GREATER_THAN, 1)
+            | size(HEIGHT, GREATER_THAN, 1);
+};
+
+
+Component App(AppState& state) {
+    auto command = CommandInput(state);
+
+    return Renderer(command, [&]() {
+        return dbox({
+            CameraView(state),
+            state.displayCommand ? Overlay(command) : filler(),
+        });
+    });
+}
+
+Component MakeController(AppState& state, ScreenInteractive& screen, Component appView) {
+    return CatchEvent(appView, [&](Event event) {
+        if (event == Event::Character(':')) {
+            state.displayCommand = true;
+            return true;
+        }
+        if (event == Event::Escape) {
+            state.displayCommand = false;
+            return true;
+        }
         if (event == Event::Character('q')) {
             state.running = false;
             screen.Exit();
@@ -96,8 +144,8 @@ int main(int argc, char* argv[]) {
     // start terminal screen
     auto screen { ScreenInteractive::Fullscreen() };
 
-    auto view = MakeView(state);
-    auto app  = MakeController(state, screen, view);
+    auto appView = App(state);
+    auto app  = MakeController(state, screen, appView);
 
     std::thread worker(camera_loop, std::ref(state), std::ref(camera), std::ref(screen));
 
