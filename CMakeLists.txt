@@ -13,6 +13,13 @@ find_package(ftxui CONFIG REQUIRED)
 
 add_executable(textsight
     src/main.cpp
+    src/ascii.cpp
+    src/app/app_controller.cpp
+    src/ui/app_components.cpp
+)
+
+target_include_directories(textsight 
+    PRIVATE src
 )
 
 target_link_libraries(textsight PRIVATE
