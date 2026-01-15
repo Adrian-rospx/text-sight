@@ -7,5 +7,5 @@ int main(int argc, char* argv[]) {
     AppState state {};
 
     AppController controller(state);
-    controller.Run();
+    controller.run();
 }

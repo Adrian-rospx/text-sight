@@ -1,12 +1,9 @@
 #pragma once
 
-#include <iostream>
-
 #include "opencv2/videoio.hpp"
 #include "ftxui/component/screen_interactive.hpp"
 
 #include "app/app_state.hpp"
-#include "ui/app_components.hpp"
 
 using namespace ftxui;
 
@@ -20,27 +17,9 @@ public:
             : state(state)
             , screen(ScreenInteractive::Fullscreen()) {}
 
-    int Run() {
-        cv::VideoCapture camera(0);
-        if (!camera.isOpened()) {
-            std::cerr << "ERROR: Could not open camera\n";
-            return 1;
-        }
-
-        auto view = MakeView(state);
-        auto app  = MakeController(state, screen, view);
-
-        std::thread worker(camera_loop, std::ref(state), std::ref(camera), std::ref(screen));
-
-        screen.Loop(app);
-
-        state.running = false;
-        worker.join();
-
-        return 0;
-    }
+    int run();
 
 private:
-    AppState state{};
+    AppState state {};
     ScreenInteractive screen {ScreenInteractive::Fullscreen()};
 };

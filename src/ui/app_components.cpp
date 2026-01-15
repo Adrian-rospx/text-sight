@@ -3,6 +3,7 @@
 
 #include "app_components.hpp"
 #include "app/app_state.hpp"
+#include "ui/overlays/title_bar.hpp"
 
 Component CommandInput(AppState& state) {
     auto input = Input(state.command, "Enter a command");
@@ -42,6 +43,7 @@ Component MakeView(AppState& state) {
     return Renderer(command, [&]() {
         return dbox({
             CameraView(state),
+            titleBar(),
             state.displayCommand ? Overlay(command) : filler(),
         });
     });
