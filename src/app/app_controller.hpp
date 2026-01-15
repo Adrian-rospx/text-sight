@@ -20,6 +20,6 @@ public:
     int run();
 
 private:
-    AppState state {};
+    AppState& state;
     ScreenInteractive screen {ScreenInteractive::Fullscreen()};
 };

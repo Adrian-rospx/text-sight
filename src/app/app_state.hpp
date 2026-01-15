@@ -1,14 +1,15 @@
 #pragma once
 
+#include <atomic>
 #include <string>
 
 struct AppState {
-    bool running { true };
-    std::string asciiFrame{};
-
+    std::string asciiFrame{};   // written to by camera thread
+    std::string command{};
+    
     int width { 120 };
     int height { 40 };
-
-    bool displayCommand { false };
-    std::string command{};
+    
+    std::atomic<bool> running { true };         // controls the camera thread
+    std::atomic<bool> displayCommand { false }; // displays the command overlay
 };

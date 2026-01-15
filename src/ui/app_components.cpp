@@ -5,46 +5,31 @@
 #include "app/app_state.hpp"
 #include "ui/overlays/title_bar.hpp"
 
-Component CommandInput(AppState& state) {
-    auto input = Input(state.command, "Enter a command");
-
-    return Renderer(input, [&]() {
-        return vbox({
-            text("Command") | bold,
-            input->Render()
-        })
-        | border
-        | bgcolor(Color::Black)
-        | color(Color::White);
-    });
-}
-
-Element Overlay(Component command) {
-    return vbox({
-        filler(),
-        hbox({
-            filler(),
-            command->Render() | size(WIDTH, LESS_THAN, 60),
-            filler()
-        }),
-        text("")    // small text margin    
-    });
-}
-
 Element CameraView(AppState& state) {
     return paragraph(state.asciiFrame)
             | size(WIDTH, GREATER_THAN, 1)
             | size(HEIGHT, GREATER_THAN, 1);
-};
+}
 
-Component MakeView(AppState& state) {
-    auto command = CommandInput(state);
+Element commandOverlay(AppState& state) {
+    return state.displayCommand 
+        ? vbox({
+            filler(),
+                hbox({
+                    text(state.command) | border
+                        | size(WIDTH, GREATER_THAN, 10),
+                    filler(),
+                }),
+            })
+        : filler();
+}
 
-    return Renderer(command, [&]() {
+Component MakeView(AppState& state, Component container) {
+    return Renderer(container, [&]() {
         return dbox({
             CameraView(state),
             titleBar(),
-            state.displayCommand ? Overlay(command) : filler(),
+            commandOverlay(state)
         });
     });
 }
@@ -59,7 +44,7 @@ Component MakeController(AppState& state, ScreenInteractive& screen, Component a
             state.displayCommand = false;
             return true;
         }
-        if (event == Event::Character('q')) {
+        if (!state.displayCommand && event == Event::Character('q')) {
             state.running = false;
             screen.Exit();
             return true;

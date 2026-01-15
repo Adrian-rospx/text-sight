@@ -32,7 +32,12 @@ int AppController::run() {
         return 1;
     }
 
-    auto view = MakeView(state);
+    auto commandInput = Input(&state.command, "Enter a command");
+    auto container = Container::Vertical({
+        commandInput,
+    });
+
+    auto view = MakeView(state, container);
     auto app  = MakeController(state, screen, view);
 
     std::thread worker(camera_loop, std::ref(state), std::ref(camera), std::ref(screen));
