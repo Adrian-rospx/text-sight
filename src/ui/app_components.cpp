@@ -12,12 +12,12 @@ Element CameraView(AppState& state) {
             | size(HEIGHT, GREATER_THAN, 1);
 }
 
-Element commandOverlay(AppState& state) {
+Element commandOverlay(AppState& state, Component commandInput) {
     return state.displayCommand 
         ? vbox({
             filler(),
                 hbox({
-                    text(state.command) | border
+                    commandInput->Render() | border
                         | size(WIDTH, GREATER_THAN, 10),
                     filler(),
                 }),
@@ -30,7 +30,7 @@ Component MakeView(AppState& state, Component container, Component commandInput)
         return dbox({
             CameraView(state),
             titleBar(),
-            commandOverlay(state)
+            commandOverlay(state, commandInput),
         });
     });
 }
