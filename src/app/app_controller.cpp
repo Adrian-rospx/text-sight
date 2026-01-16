@@ -1,4 +1,5 @@
 #include <iostream>
+#include <opencv2/core.hpp>
 
 #include "ui/app_components.hpp"
 #include "ascii.hpp"
@@ -37,8 +38,8 @@ int AppController::run() {
         commandInput,
     });
 
-    auto view = MakeView(state, container);
-    auto app  = MakeController(state, screen, view);
+    auto view = MakeView(state, container, commandInput);
+    auto app  = MakeController(state, screen, view, commandInput);
 
     std::thread worker(camera_loop, std::ref(state), std::ref(camera), std::ref(screen));
 

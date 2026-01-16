@@ -4,6 +4,9 @@
 const std::string_view textGradient { " .,-;<+*/ixaA8#M" };
 
 std::string imageToASCII(const cv::Mat& frame, const int width, const int height) {
+    if (frame.empty()) return {};
+    if (width <= 0 || height <= 0) return {};
+
     cv::Mat resized;
     cv::resize(frame, resized, cv::Size(width, height));
     cv::cvtColor(resized, resized, cv::COLOR_BGR2GRAY);

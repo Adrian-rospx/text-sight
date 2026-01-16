@@ -1,5 +1,6 @@
-#include "ftxui/dom/elements.hpp"
 #include "ftxui/component/component.hpp"
+#include "ftxui/component/component_base.hpp"
+#include "ftxui/dom/elements.hpp"
 
 #include "app_components.hpp"
 #include "app/app_state.hpp"
@@ -24,7 +25,7 @@ Element commandOverlay(AppState& state) {
         : filler();
 }
 
-Component MakeView(AppState& state, Component container) {
+Component MakeView(AppState& state, Component container, Component commandInput) {
     return Renderer(container, [&]() {
         return dbox({
             CameraView(state),
@@ -34,17 +35,20 @@ Component MakeView(AppState& state, Component container) {
     });
 }
 
-Component MakeController(AppState& state, ScreenInteractive& screen, Component appView) {
+Component MakeController(AppState& state, ScreenInteractive& screen, 
+        Component appView, Component commandInput) {
     return CatchEvent(appView, [&](Event event) {
-        if (event == Event::Character(':')) {
+        // open the command line
+        if (event == Event::Character(':')  && !state.displayCommand) {
             state.displayCommand = true;
+            commandInput->TakeFocus();
             return true;
         }
-        if (event == Event::Escape) {
+        if (event == Event::Escape          && state.displayCommand) {
             state.displayCommand = false;
             return true;
         }
-        if (!state.displayCommand && event == Event::Character('q')) {
+        if (event == Event::Character('q')  && !state.displayCommand) {
             state.running = false;
             screen.Exit();
             return true;

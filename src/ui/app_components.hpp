@@ -7,6 +7,7 @@
 
 using namespace ftxui;
 
-Component MakeView(AppState& state, Component container);
+Component MakeView(AppState& state, Component container, Component commandInput);
 
-Component MakeController(AppState& state, ScreenInteractive& screen, Component appView);
+Component MakeController(AppState& state, ScreenInteractive& screen, 
+        Component appView, Component commandInput);
