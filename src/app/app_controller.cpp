@@ -1,28 +1,22 @@
-#include <ftxui/component/component.hpp>
-#include <ftxui/component/component_options.hpp>
-#include <ftxui/dom/elements.hpp>
-#include <ftxui/screen/color.hpp>
-#include <iostream>
-#include <opencv2/core.hpp>
+#include "ftxui/component/component.hpp"
+#include "ftxui/component/component_options.hpp"
+#include "ftxui/dom/elements.hpp"
 
+#include "services/camera.hpp"
 #include "ui/app_components.hpp"
-#include "ascii.hpp"
 
 #include "app/app_controller.hpp"
 
-void camera_loop(AppState& state, cv::VideoCapture& camera, ScreenInteractive& screen) {
+void camera_loop(AppState& state, Camera& camera, ScreenInteractive& screen) {
     using namespace std::chrono_literals;
 
-    cv::Mat frame;
-
     while (state.isLoopRunning) {
-        camera >> frame;
-        if (frame.empty()) continue;
+        camera.update();
 
         state.width = screen.dimx();
         state.height = screen.dimy();
 
-        state.asciiFrame = imageToASCII(frame, state.width, state.height);
+        state.asciiFrame = camera.toStringFrame(state.width, state.height);
 
         screen.PostEvent(Event::Custom);
 
@@ -31,28 +25,27 @@ void camera_loop(AppState& state, cv::VideoCapture& camera, ScreenInteractive& s
 }
 
 int AppController::run() {
-    cv::VideoCapture camera(0);
-    if (!camera.isOpened()) {
-        std::cerr << "ERROR: Could not open camera\n";
-        return 1;
-    }
+    Camera camera;
 
+    // command input component
     InputOption commandOption = InputOption::Default();
     commandOption.transform = [](InputState state) {
-        state.element = window(text("cmd") | bold,
+        state.element = window(text("cmd"),
             std::move(state.element)
         )   | size(WIDTH, LESS_THAN, 32);
         
         return state.element;
     };
     commandOption.cursor_position = &state.cursorPosition;
-
     auto commandInput = Input(
             &state.command, 
             commandOption
     );
+
+    // empty component
     auto focusSink = Renderer([]() {return filler();});
 
+    // container for input components
     auto container = Container::Vertical({
             focusSink,
             commandInput,

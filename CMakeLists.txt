@@ -13,8 +13,8 @@ find_package(ftxui CONFIG REQUIRED)
 
 add_executable(textsight
     src/main.cpp
-    src/ascii.cpp
     src/app/app_controller.cpp
+    src/services/camera.cpp
     src/ui/app_components.cpp
 )
 
