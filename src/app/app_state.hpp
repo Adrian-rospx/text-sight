@@ -9,7 +9,8 @@ struct AppState {
     
     int width { 120 };
     int height { 40 };
-    
-    std::atomic<bool> running { true };         // controls the camera thread
-    std::atomic<bool> displayCommand { false }; // displays the command overlay
+    int cursorPosition {};
+
+    std::atomic<bool> isLoopRunning { true };     // controls the camera thread
+    bool displayCommand { false };          // displays the command overlay
 };

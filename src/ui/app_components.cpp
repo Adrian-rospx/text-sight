@@ -5,6 +5,7 @@
 #include "app_components.hpp"
 #include "app/app_state.hpp"
 #include "ui/overlays/title_bar.hpp"
+#include "ui/overlays/command_line.hpp"
 
 Element CameraView(AppState& state) {
     return paragraph(state.asciiFrame)
@@ -12,45 +13,51 @@ Element CameraView(AppState& state) {
             | size(HEIGHT, GREATER_THAN, 1);
 }
 
-Element commandOverlay(AppState& state, Component commandInput) {
-    return state.displayCommand 
-        ? vbox({
-            filler(),
-                hbox({
-                    commandInput->Render() | border
-                        | size(WIDTH, GREATER_THAN, 10),
-                    filler(),
-                }),
-            })
-        : filler();
-}
-
 Component MakeView(AppState& state, Component container, Component commandInput) {
     return Renderer(container, [&]() {
         return dbox({
             CameraView(state),
             titleBar(),
-            commandOverlay(state, commandInput),
+            commandLine(state, commandInput),
         });
     });
 }
 
-Component MakeController(AppState& state, ScreenInteractive& screen, 
-        Component appView, Component commandInput) {
-    return CatchEvent(appView, [&](Event event) {
+Component MakeController(
+        AppState& state, 
+        ScreenInteractive& screen, 
+        Component view, 
+        Component commandInput,
+        Component focusSink
+) {
+    return CatchEvent(view, [&](Event event) {
         // open the command line
         if (event == Event::Character(':')  && !state.displayCommand) {
             state.displayCommand = true;
+            state.command = ":";
+            state.cursorPosition = 1;
+
             commandInput->TakeFocus();
+            return true;
+        }
+        if (event == Event::Character('q')  && !state.displayCommand) {
+            state.isLoopRunning = false;
+            screen.Exit();
             return true;
         }
         if (event == Event::Escape          && state.displayCommand) {
             state.displayCommand = false;
+            state.command.clear();
+
+            focusSink->TakeFocus();
             return true;
         }
-        if (event == Event::Character('q')  && !state.displayCommand) {
-            state.running = false;
-            screen.Exit();
+        if (event == Event::Backspace       && state.displayCommand 
+            && state.command == ":") {
+            state.displayCommand = false;
+            state.command.clear();
+
+            focusSink->TakeFocus();   
             return true;
         }
         return false;

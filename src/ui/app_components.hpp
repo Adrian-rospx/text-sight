@@ -9,5 +9,10 @@ using namespace ftxui;
 
 Component MakeView(AppState& state, Component container, Component commandInput);
 
-Component MakeController(AppState& state, ScreenInteractive& screen, 
-        Component appView, Component commandInput);
+Component MakeController(
+        AppState& state, 
+        ScreenInteractive& screen, 
+        Component view, 
+        Component commandInput,
+        Component focusSink
+);
