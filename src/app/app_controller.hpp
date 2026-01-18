@@ -17,6 +17,7 @@ public:
             : state(state)
             , screen(ScreenInteractive::Fullscreen()) {}
 
+    // attempt to start the application
     int run();
 
 private:

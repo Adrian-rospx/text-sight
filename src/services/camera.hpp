@@ -18,7 +18,10 @@ public:
     void update();
 
     // converts processed frame to an ascii string
-    std::string toStringFrame(int width, int height);
+    std::string getStringFrame(int width, int height);
+    
+    // returns the resized frame
+    cv::Mat getFrame(int width, int height);
 
 private:
     cv::Mat lastFrame;

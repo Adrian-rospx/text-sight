@@ -1,22 +1,45 @@
+#include <cstdint>
+
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/component_base.hpp"
 #include "ftxui/dom/elements.hpp"
 
-#include "app_components.hpp"
 #include "app/app_state.hpp"
 #include "ui/overlays/title_bar.hpp"
 #include "ui/overlays/command_line.hpp"
 
-Element CameraView(AppState& state) {
+#include "app_components.hpp"
+
+Element ImageParagraph(AppState& state) {
     return paragraph(state.asciiFrame)
             | size(WIDTH, GREATER_THAN, 1)
             | size(HEIGHT, GREATER_THAN, 1);
 }
 
+Element ImageCanvas(AppState& state) {
+    return canvas([&](Canvas& c) {
+        const int w { c.width() };
+        const int h { c.height() };
+
+        const auto frame = state.frame;
+
+        for (int y {}; y < h; ++y) {
+            for (int x {}; x < w; ++x) {
+                const auto value = frame.at<std::uint8_t>(y, x);
+                const auto index = value * (textGradient.size() - 1) / 255;
+                const char ch { textGradient[index] };
+
+                // draw pixel
+                c.DrawText(x, y, std::string(1, ch));
+            }
+        }
+    });
+}
+
 Component MakeView(AppState& state, Component container, Component commandInput) {
     return Renderer(container, [&]() {
         return dbox({
-            CameraView(state),
+            ImageParagraph(state),
             titleBar(),
             commandLine(state, commandInput),
         });
