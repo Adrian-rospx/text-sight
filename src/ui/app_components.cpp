@@ -1,4 +1,6 @@
 #include <cstdint>
+#include <mutex>
+#include <string>
 
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/component_base.hpp"
@@ -17,20 +19,31 @@ Element ImageParagraph(AppState& state) {
 }
 
 Element ImageCanvas(AppState& state) {
-    return canvas([&](Canvas& c) {
-        const int w { c.width() };
-        const int h { c.height() };
+    cv::Mat frameCopy;
+    {
+        std::lock_guard lock(state.frameMutex);
+        if (!state.frame.empty())
+            frameCopy = state.frame.clone();
+    }
 
-        const auto frame = state.frame;
+    return canvas([frameCopy, &state](Canvas& c) {
+        if (frameCopy.empty())
+            return;
+
+        const int cw { c.width() };
+        const int ch { c.height() };
+        if (cw <= 0 || ch <= 0) return;
+
+        const int w { std::min(cw, frameCopy.cols) };
+        const int h { std::min(ch, frameCopy.rows) };
 
         for (int y {}; y < h; ++y) {
             for (int x {}; x < w; ++x) {
-                const auto value = frame.at<std::uint8_t>(y, x);
+                const auto value = frameCopy.at<std::uint8_t>(y, x);
                 const auto index = value * (textGradient.size() - 1) / 255;
-                const char ch { textGradient[index] };
 
                 // draw pixel
-                c.DrawText(x, y, std::string(1, ch));
+                c.DrawText(x, y, std::string(1, textGradient[index]));
             }
         }
     });
@@ -39,7 +52,12 @@ Element ImageCanvas(AppState& state) {
 Component MakeView(AppState& state, Component container, Component commandInput) {
     return Renderer(container, [&]() {
         return dbox({
-            ImageParagraph(state),
+            ImageCanvas(state),
+            vbox({
+                filler(),
+                text(std::to_string(state.width) + " " + std::to_string(state.height)),
+                filler()
+            }),
             titleBar(),
             commandLine(state, commandInput),
         });

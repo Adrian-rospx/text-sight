@@ -1,3 +1,5 @@
+#include <mutex>
+
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/component_options.hpp"
 #include "ftxui/dom/elements.hpp"
@@ -16,8 +18,11 @@ void camera_loop(AppState& state, Camera& camera, ScreenInteractive& screen) {
         state.width = screen.dimx();
         state.height = screen.dimy();
 
-        state.asciiFrame = camera.getStringFrame(state.width, state.height);
-        state.frame = camera.getFrame(state.width, state.height);
+        // state.asciiFrame = camera.getStringFrame(state.width, state.height);
+        {
+            std::lock_guard lock(state.frameMutex);
+            state.frame = camera.getFrame(state.width, state.height);
+        }
 
         screen.PostEvent(Event::Custom);
 
