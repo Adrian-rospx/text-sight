@@ -14,14 +14,9 @@ void camera_loop(AppState& state, Camera& camera, ScreenInteractive& screen) {
 
     while (state.isLoopRunning) {
         camera.update();
-
-        state.width = screen.dimx();
-        state.height = screen.dimy();
-
-        // state.asciiFrame = camera.getStringFrame(state.width, state.height);
         {
             std::lock_guard lock(state.frameMutex);
-            state.frame = camera.getFrame(state.width, state.height);
+            state.frame = camera.getFrame();
         }
 
         screen.PostEvent(Event::Custom);

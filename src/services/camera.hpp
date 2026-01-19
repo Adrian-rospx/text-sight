@@ -21,7 +21,7 @@ public:
     std::string getStringFrame(int width, int height);
     
     // returns the resized frame
-    cv::Mat getFrame(int width, int height);
+    cv::Mat getFrame();
 
 private:
     cv::Mat lastFrame;

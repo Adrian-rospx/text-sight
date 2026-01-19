@@ -42,15 +42,12 @@ std::string Camera::getStringFrame(int width, int height) {
     return str;
 }
 
-cv::Mat Camera::getFrame(int width, int height) {
+cv::Mat Camera::getFrame() {
     if (processedFrame.empty()) 
         throw std::runtime_error("Error: empty processed frame can't be transformed");
-    if (width <= 0 || height <= 0) 
-        throw std::runtime_error("Error: width and height must be larger than 0");
 
     cv::Mat frame;
     cv::cvtColor(processedFrame, frame, cv::COLOR_BGR2GRAY);
-    cv::resize(frame, frame, cv::Size(width, height));
 
     return frame;
 }

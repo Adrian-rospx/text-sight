@@ -14,8 +14,6 @@ struct AppState {
     std::string asciiFrame {};  // written to by camera thread
     std::string command {};
     
-    int width { 40 };
-    int height { 10 };
     int cursorPosition {};  // controls view image position
 
     std::atomic<bool> isLoopRunning { true };     // controls the camera thread
