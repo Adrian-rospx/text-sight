@@ -14,19 +14,10 @@
 
 #pragma once
 
-#include "ftxui/dom/elements.hpp"
-#include "ftxui/dom/node.hpp"
+#include "ftxui/component/component_base.hpp"
+
+#include "app/app_state.hpp"
 
 using namespace ftxui;
 
-inline Element titleBar() {
-    return vbox({
-        hbox({
-            filler(),
-            text("Text sight") 
-                | underlined,
-            filler()
-        }),
-        filler()
-    });
-}
+Component MakeView(AppState& state, Component container, Component commandInput);

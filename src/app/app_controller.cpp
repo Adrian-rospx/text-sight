@@ -19,7 +19,8 @@
 #include "ftxui/dom/elements.hpp"
 
 #include "services/camera.hpp"
-#include "ui/app_components.hpp"
+#include "ui/controller.hpp"
+#include "ui/view.hpp"
 
 #include "app/app_controller.hpp"
 

@@ -15,7 +15,7 @@
 #pragma once
 
 #include "ftxui/dom/elements.hpp"
-#include "ftxui/component/component.hpp"
+#include "ftxui/component/component_base.hpp"
 
 #include "app/app_state.hpp"
 

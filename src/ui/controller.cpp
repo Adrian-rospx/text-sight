@@ -14,24 +14,13 @@
 
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/component_base.hpp"
-#include "ftxui/dom/elements.hpp"
+#include "ftxui/component/event.hpp"
 
 #include "app/app_state.hpp"
-#include "ui/image_canvas.hpp"
-#include "ui/overlays/title_bar.hpp"
-#include "ui/overlays/command_line.hpp"
 
-#include "app_components.hpp"
+#include "ui/controller.hpp"
 
-Component MakeView(AppState& state, Component container, Component commandInput) {
-    return Renderer(container, [&]() {
-        return dbox({
-            ImageCanvas(state),
-            titleBar(),
-            commandLine(state, commandInput),
-        });
-    });
-}
+using namespace ftxui;
 
 Component MakeController(
         AppState& state, 

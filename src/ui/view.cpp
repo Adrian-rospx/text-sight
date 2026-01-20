@@ -12,21 +12,24 @@
  * GNU General Public License for more details.
  */
 
-#pragma once
+#include "ftxui/component/component_base.hpp"
+#include "ftxui/component/component.hpp"
 
-#include "ftxui/dom/elements.hpp"
-#include "ftxui/dom/node.hpp"
+#include "app/app_state.hpp"
+#include "ui/image_canvas.hpp"
+#include "ui/overlays/command_line.hpp"
+#include "ui/overlays/title_bar.hpp"
+
+#include "ui/view.hpp"
 
 using namespace ftxui;
 
-inline Element titleBar() {
-    return vbox({
-        hbox({
-            filler(),
-            text("Text sight") 
-                | underlined,
-            filler()
-        }),
-        filler()
+Component MakeView(AppState& state, Component container, Component commandInput) {
+    return Renderer(container, [&]() {
+        return dbox({
+            ImageCanvas(state),
+            titleBar(),
+            commandLine(state, commandInput),
+        });
     });
 }

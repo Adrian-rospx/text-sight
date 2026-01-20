@@ -35,7 +35,7 @@ Element ImageCanvas(AppState& state) {
             frameCopy = state.frame.clone();
     }
 
-    return canvas([frameCopy, &state](Canvas& c) {
+    return canvas([frameCopy](Canvas& c) {
         if (frameCopy.empty())
             return;
 

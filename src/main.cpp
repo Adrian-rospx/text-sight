@@ -15,9 +15,7 @@
 #include "app/app_controller.hpp"
 #include "app/app_state.hpp"
 
-using namespace ftxui;
-
-int main(int argc, char* argv[]) {
+int main() {
     AppState state {};
 
     AppController controller(state);
