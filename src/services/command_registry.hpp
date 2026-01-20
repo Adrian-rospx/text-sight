@@ -14,18 +14,29 @@
 
 #pragma once
 
-#include "ftxui/component/component_base.hpp"
-#include "ftxui/component/screen_interactive.hpp"
+#include <functional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "app/app_state.hpp"
-#include "services/command_registry.hpp"
 
-using namespace ftxui;
+class CommandRegistry {
+public:
+    using Args = std::vector<std::string>;
+    using CommandFunction = std::function<void(AppState&, const Args&)>;
 
-Component MakeController(
-        AppState& state,
-        CommandRegistry& registry, 
-        Component view, 
-        Component commandInput,
-        Component focusSink
-);
+    CommandRegistry() {
+        init();
+    }
+
+    void registerCommand(std::string name, CommandFunction func);
+
+    // execute the given command text
+    void execute(AppState& state, const std::string& input);
+
+private:
+    void init();
+
+    std::unordered_map<std::string, CommandFunction> m_commands{};
+};

@@ -19,6 +19,7 @@
 #include "ftxui/dom/elements.hpp"
 
 #include "services/camera.hpp"
+#include "services/command_registry.hpp"
 #include "ui/controller.hpp"
 #include "ui/view.hpp"
 
@@ -38,10 +39,12 @@ void camera_loop(AppState& state, Camera& camera, ScreenInteractive& screen) {
 
         std::this_thread::sleep_for(33ms); 
     }
+    screen.Exit();
 }
 
 int AppController::run() {
     Camera camera;
+    CommandRegistry registry;
 
     // command input component
     InputOption commandOption = InputOption::Default();
@@ -53,6 +56,7 @@ int AppController::run() {
         return state.element;
     };
     commandOption.cursor_position = &state.cursorPosition;
+
     auto commandInput = Input(
             &state.command, 
             commandOption
@@ -69,13 +73,14 @@ int AppController::run() {
 
     auto view = MakeView(state, container, commandInput);
     auto app  = MakeController(
-            state, 
-            screen, 
+            state,
+            registry,
             view, 
             commandInput, 
             focusSink
     );
 
+    // start camera thread
     std::thread worker(camera_loop, 
             std::ref(state), std::ref(camera), std::ref(screen));
 

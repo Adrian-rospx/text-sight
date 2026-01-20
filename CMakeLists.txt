@@ -15,6 +15,7 @@ add_executable(textsight
     src/main.cpp
     src/app/app_controller.cpp
     src/services/camera.cpp
+    src/services/command_registry.cpp
     src/ui/controller.cpp
     src/ui/image_canvas.cpp
     src/ui/view.cpp
