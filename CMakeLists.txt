@@ -16,6 +16,7 @@ add_executable(textsight
     src/app/app_controller.cpp
     src/services/camera.cpp
     src/ui/app_components.cpp
+    src/ui/image_canvas.cpp
 )
 
 target_include_directories(textsight 
