@@ -22,14 +22,16 @@
 const std::string_view textGradient { " .,-;<+*/ixaA8#M" };
 
 struct AppState {
-    cv::Mat frame {};   // written to by the camera thread
+    cv::Mat frame {};   // written to by the camera thread (requires mutex)
     std::mutex frameMutex {};
 
     std::string asciiFrame {};  // written to by camera thread
     std::string command {};
+    std::string statusMessage {};
     
     int cursorPosition {};  // controls view image position
 
     std::atomic<bool> isLoopRunning { true };     // controls the camera thread
-    bool displayCommand { false };          // displays the command overlay
+    bool displayCommand { false };
+    bool displayStatus { false };
 };

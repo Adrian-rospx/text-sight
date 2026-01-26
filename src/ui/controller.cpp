@@ -46,6 +46,7 @@ Component MakeController(
             state.isLoopRunning = false;
             return true;
         }
+        // command line events
         if (event == Event::Escape      && state.displayCommand) {
             state.displayCommand = false;
             state.command.clear();
@@ -66,7 +67,8 @@ Component MakeController(
             try {
                 registry.execute(state, state.command);
             } catch (std::runtime_error e) {
-                
+                state.statusMessage = e.what();
+                state.displayStatus = true;
             }
 
             state.command.clear();
@@ -74,6 +76,9 @@ Component MakeController(
 
             focusSink->TakeFocus();
             return true;
+        }
+        if (event == Event::Escape && state.displayStatus) {
+            state.displayStatus = false;
         }
         return false;
     });

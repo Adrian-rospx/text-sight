@@ -16,17 +16,21 @@
 
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/dom/node.hpp"
+#include "ftxui/component/component.hpp"
+#include "ftxui/component/component_base.hpp"
 
 using namespace ftxui;
 
-inline Element titleBar() {
-    return vbox({
-        hbox({
-            filler(),
-            text("Text sight") 
-                | underlined,
+inline Component TitleBar() {
+    return Renderer([]() {
+        return vbox({
+            hbox({
+                filler(),
+                text("Text sight") 
+                    | underlined,
+                filler()
+            }),
             filler()
-        }),
-        filler()
+        });
     });
 }
