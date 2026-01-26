@@ -28,10 +28,10 @@ using namespace ftxui;
 Component MakeView(AppState& state, Component container, Component commandInput) {
     return Renderer(container, [&]() {
         return dbox({
-            ImageCanvas(state),
+            ImageCanvas(state)->Render(),
             TitleBar()->Render(),
             StatusWindow(state)->Render(),
-            commandLine(state, commandInput),
+            commandLine(state, commandInput)->Render(),
         });
     });
 }

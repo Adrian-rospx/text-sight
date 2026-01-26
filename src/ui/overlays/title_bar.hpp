@@ -26,8 +26,10 @@ inline Component TitleBar() {
         return vbox({
             hbox({
                 filler(),
+                separatorEmpty(),
                 text("Text sight") 
                     | underlined,
+                separatorEmpty(),
                 filler()
             }),
             filler()
