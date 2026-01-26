@@ -6,7 +6,6 @@
       "default-features": false,
       "features": [
         "highgui",
-        "gtk",
         "dnn",
         "jpeg",
         "png"

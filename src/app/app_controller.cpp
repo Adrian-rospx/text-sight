@@ -51,6 +51,7 @@ int AppController::run() {
     commandOption.transform = [](InputState state) {
         state.element = window(text("cmd"),
             std::move(state.element)
+                | clear_under
         )   | size(WIDTH, LESS_THAN, 32);
         
         return state.element;
