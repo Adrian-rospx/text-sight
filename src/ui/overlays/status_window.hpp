@@ -16,10 +16,9 @@
 
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/component/component_base.hpp"
+#include "ftxui/component/component.hpp"
 
 #include "app/app_state.hpp"
-#include <ftxui/component/component.hpp>
-#include <ftxui/dom/deprecated.hpp>
 
 using namespace ftxui;
 

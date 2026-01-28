@@ -33,3 +33,7 @@ target_link_libraries(textsight PRIVATE
     ftxui::dom
     ftxui::component
 )
+
+install(TARGETS textsight
+    RUNTIME DESTINATION bin
+)
